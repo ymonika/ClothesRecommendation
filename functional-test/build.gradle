@@ -1,0 +1,47 @@
+group 'functional-test'
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+
+sourceCompatibility = 1.8
+
+repositories{
+	mavenCentral()
+}
+
+dependencies{
+	compile apacheHttpClient,mySql,commonsDbcp,groovy.core
+	compile cucumber.java,cucumber.junit,junit,cucumber.spring,cucumber.groovy
+	compile spring.web,jackson.core,jackson.dataBind,spring.test,spring.jdbc
+	compile reflection, jaxRS
+	compile metrics.servlet, metrics.spring
+}
+
+configurations {
+	cucumberRuntime {
+		extendsFrom testRuntime
+	}
+}
+
+task runFT {
+	doLast {
+		javaexec {
+			main = "cucumber.api.cli.Main"
+			classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+			args = ['-p', 'html:cucumber-html-reports', '--glue', 'classpath:uk.co.o2.leancrm.stepdef', 'src/main/resources/feature','--tags','~@ignore', '--tags','~@scheduledTaskFT']
+			jvmArgs = ['-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog']
+		}
+	}
+}
+
+task runSchedulerFT {
+	doLast {
+		javaexec {
+			main = "cucumber.api.cli.Main"
+			classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+			args = ['-p', 'html:cucumber-html-reports', '--glue', 'classpath:uk.co.o2.leancrm.stepdef', 'src/main/resources/feature','--tags','@scheduledTaskFT']
+			jvmArgs = ['-Dorg.apache.commons.logging.Log=org.apache.commons.logging.impl.NoOpLog']
+		}
+	}
+}
+

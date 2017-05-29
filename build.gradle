@@ -1,0 +1,31 @@
+group 'clothesrecommendation'
+
+apply from: 'external-dependencies.gradle'
+apply from: 'deployment-support.gradle'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'idea'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "https://jcenter.bintray.com"
+        }
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-cargo-plugin:2.2.3'
+    }
+}
+
+task everyThing(type: GradleBuild){
+	description	= 'perform clean build undeploy deploy dropDb createDb'
+	group = 'clothesrecommendation'
+	tasks = ['clean','build', 'deploy', 'runFT']
+}
